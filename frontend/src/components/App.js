@@ -19,6 +19,8 @@ function App(props) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [userData, setUserData] = useState();
   const [isRegisterPopupOpen, SetIsRegisterPopupOpen] = useState(false);
+  const [isLoginPopupOpen, SetIsLoginPopupOpen] = useState(false);
+  const [loginPopupStatus, SetLoginPopupStatus] = useState(false);
   const [registerPopupStatus, SetRegisterPopupStatus] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
@@ -27,16 +29,19 @@ function App(props) {
   function handleLogin(password, email) {
 
     mestoAuth.authorize(password, email)
-    .then((data) => {
+    .then((data) => { 
       if (data.token){
         localStorage.setItem('jwt', data.token);
         api.setToken(data.token);
         setLoggedIn(true);
         setUserData(email);
         props.history.push("/");
-      }  
+      }
     })
-    .catch(err => console.log(err));
+    .catch((err) => { 
+      SetIsLoginPopupOpen(true);
+      console.log(err);
+    });
 
   } 
 
@@ -108,6 +113,7 @@ function App(props) {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    SetIsLoginPopupOpen(false);
     setSelectedCard({});
   }
 
@@ -190,6 +196,7 @@ function App(props) {
       </Route>
       <Route path="/sign-in">
         <Login handleLogin={handleLogin}/>
+        <InfoTooltip isOpen={isLoginPopupOpen} onClose={closeAllPopups} status={loginPopupStatus} />
       </Route>
       <ProtectedRoute path="/" 
         loggedIn={loggedIn} 

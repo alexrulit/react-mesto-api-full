@@ -15,7 +15,9 @@ const createUser = (req, res, next) => {
                       if(!user) {
                         throw new NotCorrectDataError('Переданы некорректные данные');
                       }
-                      res.send(user);
+                      const currentUser = user.toObject()
+                      delete currentUser.password
+                      res.send(currentUser);
                     })
                     .catch(next)
   );
