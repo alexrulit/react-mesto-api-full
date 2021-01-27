@@ -74,7 +74,7 @@ class Api {
   }
   
   const api = new Api({
-    baseUrl: 'http://api.nemesis.students.nomoredomains.icu',
+    baseUrl: 'https://api.nemesis.students.nomoredomains.icu',
     headers: {
       token: localStorage.getItem('jwt'),
       contentType: 'application/json'
