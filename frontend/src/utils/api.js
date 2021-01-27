@@ -57,7 +57,7 @@ class Api {
     cardLike(cardId, state) {
       this._cardId = cardId;
       this._method =  state ? 'DELETE' : 'PUT';
-      return this._sendRequest('/cards/likes/' + this._cardId, this._method, {});
+      return this._sendRequest('/cards/' + this._cardId + '/likes', this._method, {});
     }
   
     deleteCard(cardId) {

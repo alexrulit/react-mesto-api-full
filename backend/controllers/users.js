@@ -5,13 +5,18 @@ const AuthError = require('../errors/auth-err');
 const NotFoundError = require('../errors/not-found-err');
 const NotCorrectDataError = require('../errors/not-correct-data-err');
 const InternalServerError = require('../errors/internal-srv-err');
+const UserExist = require('../errors/user-exist');
 
 const createUser = (req, res, next) => {
   const { email, password, name, about, avatar } = req.body;
 
-  bcrypt.hash(password, 10)
-  .then(password => User.create({email, password, name, about, avatar})
-                    .then((user) => {
+  User.findOne({ email })
+  .then(user => {
+    if(!user) {
+      bcrypt.hash(password, 10)
+      .then(password => User.create({email, password, name, about, avatar})
+                    .then((user, error) => {
+                      console.log(error);
                       if(!user) {
                         throw new NotCorrectDataError('Переданы некорректные данные');
                       }
@@ -20,8 +25,12 @@ const createUser = (req, res, next) => {
                       res.send(currentUser);
                     })
                     .catch(next)
-  );
-
+      );
+    } else {
+      throw new UserExist('Пользователь с таким email уже существует');
+    }
+  })
+  .catch(next); 
 };
 
 const findUsers = (req, res, next) => {

@@ -30,8 +30,14 @@ const findCards = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
+  if (!req.params.cardId.match(/^[0-9a-fA-F]{24}$/)) {
+    throw new NotCorrectDataError('Передан некорректный id карточки');
+  }
   Card.findById(req.params.cardId)
   .then(card => {
+    if(!card) {
+      throw new NotFoundError('Карточка с указанным id не найдена');
+    }
     if(toString(card.owner) === toString(req.user._id)) {
       Card.findByIdAndRemove(card._id)
       .then((card) => {
