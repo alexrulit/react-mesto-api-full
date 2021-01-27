@@ -1,0 +1,18 @@
+@import url(./__input/main-form__input.css);
+@import url(./__title/main-form__title.css);
+@import url(./__button/main-form__button.css);
+@import url(./__link/main-form__link.css);
+
+.main-form {
+    max-width: 882px;
+    min-height: 75vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  @media screen and (max-width: 920px) {
+    .main-form {
+      margin: 0 19px 0;
+    }
+  }

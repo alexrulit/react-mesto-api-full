@@ -1,0 +1,20 @@
+.main-form__button {
+    background: #FFFFFF;
+    border-radius: 2px;
+    width: 358px;
+    height: 50px;
+    margin: 216px auto 0;
+    cursor: pointer;
+}
+
+.main-form__button:hover {
+    opacity: .85;
+    transition: opacity .2s ease-out;
+}
+
+@media screen and (max-width: 630px) {
+    .main-form__button {
+      width: 260px;
+      margin: 120px auto 0;
+    }
+  }

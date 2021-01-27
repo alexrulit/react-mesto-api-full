@@ -1,0 +1,16 @@
+.main-form__link {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    color: #FFFFFF;
+    text-decoration: none;
+    margin: 10px auto 100px;
+}
+
+.main-form__link:hover {
+    opacity: .85;
+    transition: opacity .2s ease-out;
+}
