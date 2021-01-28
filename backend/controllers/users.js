@@ -8,38 +8,48 @@ const InternalServerError = require('../errors/internal-srv-err');
 const UserExist = require('../errors/user-exist');
 
 const createUser = (req, res, next) => {
-  const { email, password, name, about, avatar } = req.body;
+  const {
+    email,
+    password,
+    name,
+    about,
+    avatar,
+  } = req.body;
 
   User.findOne({ email })
-  .then(user => {
-    if(!user) {
-      bcrypt.hash(password, 10)
-      .then(password => User.create({email, password, name, about, avatar})
-                    .then((user, error) => {
-                      console.log(error);
-                      if(!user) {
-                        throw new NotCorrectDataError('Переданы некорректные данные');
-                      }
-                      const currentUser = user.toObject()
-                      delete currentUser.password
-                      res.send(currentUser);
-                    })
-                    .catch(next)
-      );
-    } else {
-      throw new UserExist('Пользователь с таким email уже существует');
-    }
-  })
-  .catch(next); 
+    .then((user) => {
+      if (!user) {
+        bcrypt.hash(password, 10)
+          .then((passwordHash) => User.create({
+            email,
+            password: passwordHash,
+            name,
+            about,
+            avatar,
+          })
+            .then((newUser) => {
+              if (!newUser) {
+                throw new NotCorrectDataError('Переданы некорректные данные');
+              }
+              const currentUser = newUser.toObject();
+              delete currentUser.password;
+              res.send(currentUser);
+            })
+            .catch(next));
+      } else {
+        throw new UserExist('Пользователь с таким email уже существует');
+      }
+    })
+    .catch(next);
 };
 
 const findUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      if(!users) {
+      if (!users) {
         throw new InternalServerError('Не удалось получить список пользователей');
       }
-      res.send(users)
+      res.send(users);
     })
     .catch(next);
 };
@@ -61,7 +71,7 @@ const updateUser = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
     .then((user) => {
-      if(!user) {
+      if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
       res.send(user);
@@ -73,8 +83,8 @@ const updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => { 
-      if(!user) {
+    .then((user) => {
+      if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
       res.send(user);
@@ -83,19 +93,19 @@ const updateUserAvatar = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
   const { JWT_SECRET } = process.env;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if(!user){
+      if (!user) {
         throw new AuthError('Ошибка авторизации');
       }
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res.send({ token });
     })
     .catch(next);
-}
+};
 
 module.exports = {
   createUser,

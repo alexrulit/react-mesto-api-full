@@ -1,15 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors, celebrate, Joi } = require('celebrate');
+const cors = require('cors');
 require('dotenv').config();
 const cards = require('./routes/cards');
 const users = require('./routes/users');
 const error = require('./routes/error');
 const { createUser, login } = require('./controllers/users');
 const { auth } = require('./middlewares/auth');
-const { errors, celebrate, Joi } = require('celebrate');
-const cors = require('cors');
-const { requestLogger, errorLogger } = require('./middlewares/logger'); 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 
@@ -31,7 +31,7 @@ app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
-}); 
+});
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -40,14 +40,14 @@ app.post('/signup', celebrate({
     name: Joi.string().min(2).max(30),
     avatar: Joi.string().uri(),
     about: Joi.string().min(2).max(30),
-  })
+  }),
 }), createUser);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
-  })
-}) ,login);
+  }),
+}), login);
 app.use('/cards', auth, cards);
 app.use('/users', auth, users);
 app.use('/', error);
@@ -56,6 +56,7 @@ app.use(errorLogger);
 
 app.use(errors());
 
+/* eslint no-unused-vars: "off" */
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
@@ -64,7 +65,7 @@ app.use((err, req, res, next) => {
     .send({
       message: statusCode === 500
         ? 'На сервере произошла ошибка'
-        : message
+        : message,
     });
 });
 
